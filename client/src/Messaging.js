@@ -9,6 +9,8 @@ import Spinner from "react-bootstrap/Spinner";
 
 import { toast } from "react-toastify";
 
+import { onMessageListener } from './firebaseInit';
+
 export const Messaging = () => {
   const [messages, setMessages] = React.useState([]);
   const [requesting, setRequesting] = React.useState(false);
@@ -21,6 +23,16 @@ export const Messaging = () => {
     });
   }, []);
 
+  onMessageListener()
+    .then((payload) => {
+      const { title, body } = payload.data;
+      toast.info(`${title}; ${body}`);
+      console.log('payload' , payload);
+    })
+    .catch((err) => {
+      toast.error(JSON.stringify(err));
+    });
+
   return (
     <Container>
       <Formik
@@ -29,11 +41,17 @@ export const Messaging = () => {
           message: "",
         }}
         onSubmit={(values, actions) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            actions.setSubmitting(false);
-            toast.success("Submitted succesfully");
-          }, 1000);
+          axios
+            .post("/messages", values)
+            .then((resp) => {
+              setMessages(resp.data.messages.concat(messages));
+              actions.setSubmitting(false);
+              toast.success("Submitted succesfully");
+            })
+            .catch((err) => {
+              console.log(err);
+              toast.error("There was an error saving the message");
+            });
         }}
       >
         {(prop) => {

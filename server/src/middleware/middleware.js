@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const modifyMessage = (req, res, next) => {
-  req.body.message = `SAYS: ${req.body.message}`;
+  req.body.message = `${req.body.message}`;
   next();
 };
 
