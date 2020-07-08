@@ -3,6 +3,7 @@ import logger from 'morgan';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index';
+import { messaging } from './firebaseInit';
 
 const app = express();
 
